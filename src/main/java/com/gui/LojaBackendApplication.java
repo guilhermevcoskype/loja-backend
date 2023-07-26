@@ -2,18 +2,19 @@ package com.gui;
 
 import java.util.Arrays;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.gui.model.Produto;
-import com.gui.repository.ProdutosRepository;
+// @SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
+@EnableCaching
 
-@SpringBootApplication
 public class LojaBackendApplication {
 
 	public static void main(String[] args) {
@@ -37,7 +38,7 @@ public class LojaBackendApplication {
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
 
-	@Bean
+/* 	@Bean
 	CommandLineRunner initDatabase(ProdutosRepository produtosRepository) {
 
 		return args -> {
@@ -59,5 +60,5 @@ public class LojaBackendApplication {
 			produtos3.setQuantidade(25);
 			produtosRepository.save(produtos3);
 		};
-	}
+	} */
 }

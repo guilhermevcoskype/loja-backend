@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gui.model.Produto;
-import com.gui.repository.ProdutosRepository;
+import com.gui.repository.ProdutoRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ProdutosController {
 
-    private final ProdutosRepository produtosRepository;
+    private final ProdutoRepository produtosRepository;
     
     @GetMapping
     public List<Produto> listarProdutos() {
