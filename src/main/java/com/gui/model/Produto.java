@@ -11,21 +11,36 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 
 public class Produto {
 
 	@Id @GeneratedValue (strategy=GenerationType.IDENTITY)
+	@NotNull
 	private Long codigo;
+
+	@NotBlank
+	@NotNull
 	private String descricao;
+
+	@NotNull
 	private Long estoque;
+
+	@NotNull
 	private BigDecimal preco;
 	
+	@NotNull
 	private Date dataInsercao;
 
 	
+	@NotBlank
+	@NotNull
 	private String urlImagem;
+
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private TipoProduto tipoProduto;
 	

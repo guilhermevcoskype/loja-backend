@@ -1,6 +1,7 @@
 package com.gui.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
@@ -23,7 +24,7 @@ public class Conversor {
 		BigDecimal precoBigDecimal = null;
 		
 		preco = preco.replace("." , ",");
-		precoBigDecimal = new BigDecimal(stringParaDouble(preco)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+		precoBigDecimal = new BigDecimal(stringParaDouble(preco)).setScale(2, RoundingMode.HALF_EVEN);
 		
 		return precoBigDecimal;
 	}
