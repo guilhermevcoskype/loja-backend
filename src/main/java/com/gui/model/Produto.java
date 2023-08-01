@@ -3,11 +3,11 @@ package com.gui.model;
 import java.math.BigDecimal;
 import java.sql.Date;
 
+import com.gui.conversor.TipoProdutoConversor;
 import com.gui.service.FormatMoeda;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +19,6 @@ import jakarta.validation.constraints.NotNull;
 public class Produto {
 
 	@Id @GeneratedValue (strategy=GenerationType.IDENTITY)
-	@NotNull
 	private Long codigo;
 
 	@NotBlank
@@ -41,7 +40,8 @@ public class Produto {
 	private String urlImagem;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
+	//@Enumerated(EnumType.STRING)
+	@Convert(converter = TipoProdutoConversor.class)
 	private TipoProduto tipoProduto;
 	
 	public Produto() {

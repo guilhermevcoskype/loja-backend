@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ProdutoDTO(
-        @NotNull Long codigo,
+        Long codigo,
 
         @NotBlank @NotNull String descricao,
 

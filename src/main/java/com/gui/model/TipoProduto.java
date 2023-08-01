@@ -1,7 +1,7 @@
 package com.gui.model;
 
 public enum TipoProduto {
-    CAMISA("camisa"), LIVRO("livro"), GERAL("geral");
+    CAMISA("CAMISA"), LIVRO("LIVRO"), GERAL("GERAL");
 	
 	private final String tipo;
 	
