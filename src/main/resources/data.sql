@@ -45,3 +45,16 @@
 --         ('Livro de Receitas', 5, 29.99, '2022-02-01', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIrznK5vOA2Siv9k-8FUp2XM-ehNQS0yrBhdeE0vNgYIKnk27cyXkSLGFzox80w7iNcbc&usqp=CAU', 'LIVRO'),
 --         ('Caneca de Porcelana', 20, 19.99, '2022-03-01', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYuUXRoTBS_OOwQF573iQVUNBc385-Azq41loTQYBdKCUdzqs7mH_9NSN8zVhaTSYydBc&usqp=CAU', 'GERAL'),
 --         ('Camiseta Regata', 15, 39.99, '2022-04-01', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP_U3JCRTZNJEjYgv9UFDr7iZLW7JBHiyZCQ&usqp=CAU', 'CAMISA');
+
+--jsons
+/* {
+    "nome": "guilhermevcoskype@gmail.com",
+    "senha": "123456",
+    "roles": "ROLE_ADMIN"
+} 
+
+{
+    "nome": "ceboobo@hotmail.com",
+    "senha": "1234",
+    "roles": "ROLE_USER"
+}*/
