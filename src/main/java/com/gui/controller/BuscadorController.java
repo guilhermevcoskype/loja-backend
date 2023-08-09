@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gui.domain.dto.ProdutoDTO;
+import com.gui.domain.dto.DadosProduto;
 import com.gui.domain.service.ProdutoService;
 
 @RestController
@@ -21,15 +21,9 @@ public class BuscadorController {
     private ProdutoService service;
 
     @GetMapping()
-    public Page<ProdutoDTO> busca(@RequestParam("busca") String busca,
-            @PageableDefault(sort = "descricao", direction = Direction.ASC, page = 0, size = 15) Pageable paginacao,
-            @RequestParam(required = false) boolean usaBusca) {
-        Page pagina = service.buscador(busca, paginacao);
-        if (usaBusca) {
-            // return modelAndView.addObject("buscaAtual", busca);
-        }
-
-        return service.buscador(busca, paginacao);
+    public Page<DadosProduto> busca(@RequestParam("busca") String buscado,
+            @PageableDefault(sort = "descricao", direction = Direction.ASC, page = 0, size = 15) Pageable paginacao) {
+        return service.buscador(buscado, paginacao);
     }
 
 }

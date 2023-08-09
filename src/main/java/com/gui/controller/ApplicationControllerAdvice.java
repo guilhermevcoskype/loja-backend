@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.gui.infra.exception.ProdutoException;
+import com.gui.infra.exception.UsuarioException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
@@ -26,6 +27,12 @@ public class ApplicationControllerAdvice {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(UsuarioException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handlerProdutoException(UsuarioException ex) {
+        return ex.getMessage();
+    }
+
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public String handlerConstraintViolationException(ValidationException ex) {
@@ -33,8 +40,9 @@ public class ApplicationControllerAdvice {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity tratarErro404() {
-        return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String tratarErro404(EntityNotFoundException ex) {
+        return ex.getLocalizedMessage();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,28 +52,33 @@ public class ApplicationControllerAdvice {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity tratarErro400(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String tratarErro400(HttpMessageNotReadableException ex) {
+        return ex.getMessage();
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity tratarErroBadCredentials() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String tratarErroBadCredentials() {
+        return "Credenciais inválidas";
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity tratarErroAuthentication() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação");
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String tratarErroAuthentication() {
+        return "Falha na autenticação";
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity tratarErroAcessoNegado() {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String tratarErroAcessoNegado() {
+        return "Acesso negado";
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity tratarErro500(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + ex.getLocalizedMessage());
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String tratarErro500(Exception ex) {
+        return "Erro: " + ex.getLocalizedMessage();
     }
 
     private record DadosErroValidacao(String campo, String mensagem) {

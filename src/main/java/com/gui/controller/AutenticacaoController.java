@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gui.domain.dto.DadosTokenDTO;
-import com.gui.domain.dto.UsuarioRecord;
+import com.gui.domain.dto.DadosToken;
+import com.gui.domain.dto.DadosUsuario;
 import com.gui.domain.model.Role;
 import com.gui.domain.model.Usuario;
 import com.gui.domain.service.TokenService;
@@ -34,14 +34,14 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity<DadosTokenDTO> efetuarLogin(@RequestBody @Valid UsuarioRecord dados) {
-        Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dados.roles())).stream()
+    public ResponseEntity<DadosToken> efetuarLogin(@RequestBody @Valid DadosUsuario dadosUsuario) {
+        Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dadosUsuario.roles())).stream()
             .map(role -> new SimpleGrantedAuthority(role.name()))
             .collect(Collectors.toSet());
-        var authenticationToken = new UsernamePasswordAuthenticationToken(dados.nome(), dados.senha(), authorities);
+        var authenticationToken = new UsernamePasswordAuthenticationToken(dadosUsuario.nome(), dadosUsuario.senha(), authorities);
         var authentication = manager.authenticate(authenticationToken);
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok(new DadosTokenDTO(tokenJWT));
+        return ResponseEntity.ok(new DadosToken(tokenJWT));
     }
 }

@@ -2,7 +2,7 @@ package com.gui.domain.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.gui.infra.utils.FormatMoeda;
+import com.gui.domain.utils.FormatMoeda;
 
 
 public class CarrinhoItem implements Serializable{

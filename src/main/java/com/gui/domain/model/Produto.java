@@ -3,8 +3,8 @@ package com.gui.domain.model;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-import com.gui.infra.conversor.TipoProdutoConversor;
-import com.gui.infra.utils.FormatMoeda;
+import com.gui.domain.conversor.TipoProdutoConversor;
+import com.gui.domain.utils.FormatMoeda;
 
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
