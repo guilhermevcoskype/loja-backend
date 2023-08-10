@@ -14,13 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileSaver {
 
-	/*
-	 * @Value signifia que pode ser setado no application.properties pela key
-	 * app.upload.dir, se não tiver será dado o valor padrão "user.home" que está em
-	 * uma variável de ambiente de todo OS. No caso é usado o diretório deste
-	 * projeto
-	 */
-
 	@Value("${upload.dir.location=${user.dir}}")
 	public String uploadDir;
 

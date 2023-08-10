@@ -1,68 +1,37 @@
 package com.gui.domain.model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-
-
 
 @Entity
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Compra {
 
-	@Id	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
-	
-	/*
-	 * @ManyToOne(cascade=CascadeType.PERSIST) private Usuario usuario;
-	 */
-	
-	private String itens;
-	
-	private String uuid;
-	
-	private BigDecimal total;
-	
-	@PrePersist
-	public void createUUID() {
-		this.uuid = UUID.randomUUID().toString();
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    /*
+     * @ManyToOne(cascade=CascadeType.PERSIST) private Usuario usuario;
+     */
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getItens() {
-		return itens;
-	}
+    private String itens;
 
-	public void setItens(String itens) {
-		this.itens = itens;
-	}
+    private String uuid;
 
-	public String getUuid() {
-		return uuid;
-	}
+    private BigDecimal total;
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    @PrePersist
+    public void createUUID() {
+        this.uuid = UUID.randomUUID().toString();
+    }
 
-	public BigDecimal getTotal() {
-		return total;
-	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	
 }

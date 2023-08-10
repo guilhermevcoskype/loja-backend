@@ -1,65 +1,36 @@
 package com.gui.domain.model;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.gui.domain.dto.DadosProduto;
 import com.gui.domain.utils.FormatMoeda;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+public class CarrinhoItem implements Serializable {
 
-public class CarrinhoItem implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Produto produto;
+    private DadosProduto produto;
 
-	public BigDecimal getPreco(){
-	    return produto.getPreco();
-	}
-	
-	public BigDecimal getTotal(int quantidade) {
-	    return this.getPreco().multiply(new BigDecimal(quantidade));
-	}
+    public BigDecimal getPreco() {
+        return produto.preco();
+    }
 
-	public String getTotalFormatado(int quantidade) {
-		return FormatMoeda.doubleParaString(this.getPreco().multiply(new BigDecimal(quantidade)).doubleValue());
-	}
-	
-	public CarrinhoItem(Produto produto) {
-		this.produto = produto;
-	}
+    public CarrinhoItem(DadosProduto produto) {
+        this.produto = produto;
+    }
 
-	public Produto getProduto() {
-		return produto;
-	}
+    public BigDecimal getTotal(int quantidade) {
+        return this.getPreco().multiply(new BigDecimal(quantidade));
+    }
 
-	public void setProduto(Produto produto) {
-		this.produto = produto;
-	}
-	//metodos gerados com todos os itens, diferente do produto que deve ser apenas com o codigo.
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CarrinhoItem other = (CarrinhoItem) obj;
-		if (produto == null) {
-			if (other.produto != null)
-				return false;
-		} else if (!produto.equals(other.produto))
-			return false;
-		return true;
-	}
-
-	
+    public String getTotalFormatado(int quantidade) {
+        return FormatMoeda.doubleParaString(this.getPreco().multiply(new BigDecimal(quantidade)).doubleValue());
+    }
 }

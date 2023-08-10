@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gui.domain.dto.DadosProduto;
 import com.gui.domain.mapper.ProdutoMapper;
 import com.gui.domain.model.Produto;
 import com.gui.domain.model.TipoProduto;
@@ -30,16 +29,16 @@ public class ProdutoService {
 	@Autowired
 	private FileSaver fileSaver;
 
-	public Page<DadosProduto> obterTodos(Pageable pageable) {
+	public Page<com.gui.domain.dto.DadosProduto> obterTodos(Pageable pageable) {
 		return repository.findAll(pageable).map(produtoMapper::mapperToRecord);
 	}
 
-	public DadosProduto buscarProdutoPorCodigo(Long codigo) {
+	public com.gui.domain.dto.DadosProduto buscarProdutoPorCodigo(Long codigo) {
 		return repository.findById(codigo).map(produtoMapper::mapperToRecord)
 				.orElseThrow(() -> new ProdutoException(codigo));
 	}
 
-	public DadosProduto editarProduto(Long id, DadosProduto produto) {
+	public com.gui.domain.dto.DadosProduto editarProduto(Long id, com.gui.domain.dto.DadosProduto produto) {
 
 		return repository.findById(id).map(retorno -> {
 			retorno.setDataInsercao(produto.dataInsercao());
@@ -58,7 +57,7 @@ public class ProdutoService {
 	}
 
 	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public DadosProduto salvarProduto(MultipartFile file, DadosProduto produtoDTO) {
+	public com.gui.domain.dto.DadosProduto salvarProduto(MultipartFile file, com.gui.domain.dto.DadosProduto produtoDTO) {
 
 		fileSaver.write(file);
 
@@ -67,7 +66,7 @@ public class ProdutoService {
 	}
 
 	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public DadosProduto salvarProdutoSemFile(DadosProduto produtoDTO) {
+	public com.gui.domain.dto.DadosProduto salvarProdutoSemFile(com.gui.domain.dto.DadosProduto produtoDTO) {
 
 		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(produtoDTO)));
 
@@ -78,11 +77,11 @@ public class ProdutoService {
 		repository.delete(repository.findById(id).orElseThrow(() -> new ProdutoException(id)));
 	}
 
-	public Page<DadosProduto> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
+	public Page<com.gui.domain.dto.DadosProduto> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
 		return repository.findByTipoProduto(tipoProduto, paginacao).map(produtoMapper::mapperToRecord);
 	}
 
-	public Page<DadosProduto> buscador(String buscado, Pageable paginacao) {
+	public Page<com.gui.domain.dto.DadosProduto> buscador(String buscado, Pageable paginacao) {
 		return repository.findProdutoDaBusca(buscado, paginacao).map(produtoMapper::mapperToRecord);
 	}
 

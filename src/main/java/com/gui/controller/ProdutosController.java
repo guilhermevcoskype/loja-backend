@@ -53,12 +53,13 @@ public class ProdutosController {
 
     @GetMapping
     public ResponseEntity<Page<DadosProduto>> obterTodos(
-            @PageableDefault(sort = "descricao", size = 2) Pageable pageable) {
+            @PageableDefault(sort = "descricao", size = 10) Pageable pageable) {
         Page<DadosProduto> pageProdutos = produtoService.obterTodos(pageable);
         if (pageProdutos != null && !pageProdutos.isEmpty()) {
             return ResponseEntity.ok().body(pageProdutos);
-        } else
-            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
@@ -69,7 +70,7 @@ public class ProdutosController {
 
     @PutMapping("/{id}")
     public DadosProduto editarProduto(@PathVariable("id") @NotNull @Positive Long id,
-            @RequestBody @Valid DadosProduto produto) {
+                                      @RequestBody @Valid DadosProduto produto) {
         return produtoService.editarProduto(id, produto);
 
     }
