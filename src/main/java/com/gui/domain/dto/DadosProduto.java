@@ -8,17 +8,17 @@ import jakarta.validation.constraints.NotNull;
 
 public record DadosProduto(
 
-                Long id,
+                String id,
 
                 @NotBlank @NotNull String descricao,
 
-                @NotNull Long estoque,
+                @NotNull String estoque,
 
-                @NotNull BigDecimal preco,
+                @NotNull String preco,
 
-                @NotNull Date dataInsercao,
+                @NotNull String dataInsercao,
 
-                @NotBlank @NotNull String urlImagem,
+                String urlImagem,
 
                 @NotNull String tipoProduto
 

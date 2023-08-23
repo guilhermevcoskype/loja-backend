@@ -2,6 +2,7 @@ package com.gui.domain.service;
 
 import java.util.List;
 
+import com.gui.infra.exception.UsuarioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +23,12 @@ public class UsuarioService implements UserDetailsService {
 	private UsuarioMapper usuarioMapper;
 
 	public void salvarUsuario(DadosUsuario dadosUsuario) {
-		usuarioRepository.save(usuarioMapper.mapperToUsuario(dadosUsuario));
+		if(usuarioRepository.findByLogin(dadosUsuario.nome()) == null){
+			usuarioRepository.save(usuarioMapper.mapperToUsuario(dadosUsuario));
+		}else{
+			throw new UsuarioException();
+		}
+
 	}
 	
 	public void removerUsuario(Long id) {

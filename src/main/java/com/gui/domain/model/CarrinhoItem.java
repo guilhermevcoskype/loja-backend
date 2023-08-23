@@ -19,7 +19,7 @@ public class CarrinhoItem implements Serializable {
     private DadosProduto produto;
 
     public BigDecimal getPreco() {
-        return produto.preco();
+        return new BigDecimal(produto.preco());
     }
 
     public CarrinhoItem(DadosProduto produto) {

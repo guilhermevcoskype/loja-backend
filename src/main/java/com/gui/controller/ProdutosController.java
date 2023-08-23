@@ -1,35 +1,28 @@
 package com.gui.controller;
 
+import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.service.ProdutoService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gui.domain.dto.DadosProduto;
-import com.gui.domain.service.ProdutoService;
-
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @Validated
 @RequestMapping("/produtos")
-@SecurityRequirement(name = "bearer-key")
+@CrossOrigin
+//@SecurityRequirement(name = "bearer-key")
 public class ProdutosController {
 
     @Autowired
@@ -37,21 +30,18 @@ public class ProdutosController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DadosProduto salvar(MultipartFile file, @Valid @RequestBody DadosProduto dadosProduto) {
-
+    public DadosProduto salvar(@RequestPart MultipartFile file, @ModelAttribute DadosProduto dadosProduto) {
         return produtoService.salvarProduto(file, dadosProduto);
 
     }
 
-    @PostMapping
-    @RequestMapping("/sm")
-    @ResponseStatus(HttpStatus.CREATED)
-    public DadosProduto salvarSemFile(@Valid @RequestBody DadosProduto dadosProduto) {
-
-        return produtoService.salvarProdutoSemFile(dadosProduto);
+    @GetMapping("/busca")
+    public Page<DadosProduto> busca(@RequestParam("busca") String buscado,
+                                    @PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
+        return produtoService.buscador(buscado, paginacao);
     }
 
-    @GetMapping
+    @GetMapping("/todos")
     public ResponseEntity<Page<DadosProduto>> obterTodos(
             @PageableDefault(sort = "descricao", size = 10) Pageable pageable) {
         Page<DadosProduto> pageProdutos = produtoService.obterTodos(pageable);
@@ -60,6 +50,11 @@ public class ProdutosController {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public Page<DadosProduto> obterUltimosLancamentos(@PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao ) {
+            return produtoService.obterUltimosLançamentos(paginacao);
     }
 
     @GetMapping("/{id}")

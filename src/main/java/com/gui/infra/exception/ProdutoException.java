@@ -6,5 +6,9 @@ public class ProdutoException extends RuntimeException{
     public ProdutoException (Long id){
         super("Produto não encontrado com id: " + id);
     }
+
+    public ProdutoException (){
+        super("Não foram encontrados produtos");
+    }
     
 }

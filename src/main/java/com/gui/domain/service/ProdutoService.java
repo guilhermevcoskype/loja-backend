@@ -1,7 +1,11 @@
 package com.gui.domain.service;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.gui.domain.dto.DadosProduto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,22 +33,22 @@ public class ProdutoService {
 	@Autowired
 	private FileSaver fileSaver;
 
-	public Page<com.gui.domain.dto.DadosProduto> obterTodos(Pageable pageable) {
+	public Page<DadosProduto> obterTodos(Pageable pageable) {
 		return repository.findAll(pageable).map(produtoMapper::mapperToRecord);
 	}
 
-	public com.gui.domain.dto.DadosProduto buscarProdutoPorCodigo(Long codigo) {
+	public DadosProduto buscarProdutoPorCodigo(Long codigo) {
 		return repository.findById(codigo).map(produtoMapper::mapperToRecord)
 				.orElseThrow(() -> new ProdutoException(codigo));
 	}
 
-	public com.gui.domain.dto.DadosProduto editarProduto(Long id, com.gui.domain.dto.DadosProduto produto) {
+	public DadosProduto editarProduto(Long id, DadosProduto produto) {
 
 		return repository.findById(id).map(retorno -> {
-			retorno.setDataInsercao(produto.dataInsercao());
+			retorno.setDataInsercao(Date.valueOf(produto.dataInsercao()));
 			retorno.setDescricao(produto.descricao());
-			retorno.setEstoque(produto.estoque());
-			retorno.setPreco(produto.preco());
+			retorno.setEstoque(Long.valueOf(produto.estoque()));
+			retorno.setPreco(new BigDecimal(produto.preco()));
 			retorno.setTipoProduto(TipoProduto.valueOf(produto.tipoProduto()));
 			retorno.setUrlImagem(produto.urlImagem());
 			return produtoMapper.mapperToRecord(repository.save(retorno));
@@ -52,23 +56,25 @@ public class ProdutoService {
 	}
 
 	@Cacheable(value = "ultimosLancamentos") // guarda o retorno da função no
-	public List<Produto> obterUltimosLançamentos() {
-		return repository.findUltimosLancamentos();
+	public Page<DadosProduto> obterUltimosLançamentos(Pageable paginacao) throws ProdutoException{
+		return repository.findUltimosLancamentos(paginacao).map(produtoMapper::mapperToRecord);
 	}
 
 	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public com.gui.domain.dto.DadosProduto salvarProduto(MultipartFile file, com.gui.domain.dto.DadosProduto produtoDTO) {
+	public DadosProduto salvarProduto(MultipartFile file, DadosProduto dadosProduto) {
 
-		fileSaver.write(file);
+		if(!file.getOriginalFilename().equals("blob")){
+			return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto, fileSaver.write(file))));
+		}
 
-		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(produtoDTO)));
+		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto)));
 
 	}
 
 	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public com.gui.domain.dto.DadosProduto salvarProdutoSemFile(com.gui.domain.dto.DadosProduto produtoDTO) {
+	public DadosProduto salvarProdutoSemFile(DadosProduto dadosProduto) {
 
-		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(produtoDTO)));
+		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto)));
 
 	}
 
@@ -77,11 +83,11 @@ public class ProdutoService {
 		repository.delete(repository.findById(id).orElseThrow(() -> new ProdutoException(id)));
 	}
 
-	public Page<com.gui.domain.dto.DadosProduto> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
+	public Page<DadosProduto> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
 		return repository.findByTipoProduto(tipoProduto, paginacao).map(produtoMapper::mapperToRecord);
 	}
 
-	public Page<com.gui.domain.dto.DadosProduto> buscador(String buscado, Pageable paginacao) {
+	public Page<DadosProduto> buscador(String buscado, Pageable paginacao) {
 		return repository.findProdutoDaBusca(buscado, paginacao).map(produtoMapper::mapperToRecord);
 	}
 

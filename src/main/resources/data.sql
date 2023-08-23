@@ -57,4 +57,8 @@
     "nome": "ceboobo@hotmail.com",
     "senha": "1234",
     "roles": "ROLE_USER"
+
+    "nome": "guidovale@gmail.com",
+    "senha": "soubom",
+    "roles": "ROLE_USER"
 }*/

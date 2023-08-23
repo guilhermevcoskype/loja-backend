@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
-
 public class CarrinhoCompras implements Serializable {
 
     private static final long serialVersionUID = 1L;
