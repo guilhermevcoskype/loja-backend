@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import com.gui.domain.dto.DadosToken;
@@ -32,6 +33,7 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping
+    @Transactional
     public ResponseEntity<DadosToken> efetuarLogin(@RequestBody @Valid DadosUsuario dadosUsuario) {
         Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dadosUsuario.roles())).stream()
             .map(role -> new SimpleGrantedAuthority(role.name()))

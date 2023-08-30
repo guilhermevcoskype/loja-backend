@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.gui.infra.exception.ProdutoException;
 import com.gui.infra.exception.UsuarioException;
@@ -29,7 +30,7 @@ public class ApplicationControllerAdvice {
 
     @ExceptionHandler(UsuarioException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handlerProdutoException(UsuarioException ex) {
+    public String handlerUsuarioException(UsuarioException ex) {
         return ex.getMessage();
     }
 
@@ -48,7 +49,7 @@ public class ApplicationControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity tratarErro400(MethodArgumentNotValidException ex) {
         var erros = ex.getFieldErrors();
-        return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
+        return ResponseEntity.badRequest().header("Accept-Language", "pt-br").body(erros.stream().map(DadosErroValidacao::new).toList());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -73,6 +74,12 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String tratarErroAcessoNegado() {
         return "Acesso negado";
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public String tratarPagamentoErrado(Exception ex) {
+        return "Ocorreu um erro ao processar o pagamento, favor tentar novamente mais tarde";
     }
 
     @ExceptionHandler(Exception.class)

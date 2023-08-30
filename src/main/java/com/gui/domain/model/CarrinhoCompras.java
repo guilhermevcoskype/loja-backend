@@ -33,14 +33,6 @@ public class CarrinhoCompras implements Serializable {
         return itens.get(item);
     }
 
-//    public void aumentaQuantidade(Long codigo) {
-//        Produto produto = new Produto();
-//        produto.setCodigo(codigo);
-//        CarrinhoItem item = new CarrinhoItem(produto);
-//        if (itens.get(item) < 10)
-//            this.add(item);
-//    }
-
     public void aumentaQuantidade(Long codigo) {
         DadosProduto dadosProduto = produtoService.buscarProdutoPorCodigo(codigo);
         CarrinhoItem item = new CarrinhoItem(dadosProduto);
