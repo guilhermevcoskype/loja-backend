@@ -45,7 +45,7 @@ public class ProdutosControllerTest {
     @Autowired
     private JacksonTester<Page> pageJson;
 
-    private DadosProduto dadosProduto = new DadosProduto(Long.valueOf(1), "camisa", Long.valueOf(22), new BigDecimal(22.2), Date.valueOf(LocalDate.now()), "teste", TipoProduto.CAMISA.getTipo());
+    private DadosProduto dadosProduto = new DadosProduto("1", "camisa", "22", "22.2", Date.valueOf(LocalDate.now()).toString(), "teste", TipoProduto.CAMISA.getTipo());
 
     @MockBean
     private ProdutoService produtoService;
