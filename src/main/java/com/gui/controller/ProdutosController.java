@@ -56,8 +56,13 @@ public class ProdutosController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosProduto>> obterUltimosLancamentos(@PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
-        return ResponseEntity.ok(produtoService.obterUltimosLançamentos(paginacao));
+    public ResponseEntity<Page<DadosProduto>> obterUltimosLancamentos(@PageableDefault(sort = "dataInsercao", size = 8) Pageable paginacao) {
+        Page<DadosProduto> pageProdutos = produtoService.obterUltimosLançamentos(paginacao);
+        if (pageProdutos != null && !pageProdutos.isEmpty()) {
+            return ResponseEntity.ok().body(pageProdutos);
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
@@ -90,6 +95,7 @@ public class ProdutosController {
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removerProduto(@PathVariable("id") @NotNull @Positive Long id) {
+
         produtoService.removerProduto(id);
     }
 }
