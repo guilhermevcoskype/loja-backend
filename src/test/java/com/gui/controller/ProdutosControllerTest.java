@@ -19,17 +19,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,31 +46,30 @@ public class ProdutosControllerTest {
     @Autowired
     private JacksonTester<Page> pageJson;
 
-    private DadosProduto dadosProduto = new DadosProduto(Long.valueOf(1), "camisa", Long.valueOf(22), new BigDecimal(22.2), Date.valueOf(LocalDate.now()), "teste", TipoProduto.CAMISA.getTipo());
+    private DadosProduto dadosProduto = new DadosProduto("1", "camisa", "22", "22.2", Date.valueOf(LocalDate.now()).toString(), "teste", TipoProduto.CAMISA.getTipo());
+
+    private MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
 
     @MockBean
     private ProdutoService produtoService;
 
-
     @Test
-    @WithMockUser
     @DisplayName("Deve retornar o status NO_CONTENT")
     void testObterTodosRetornandoNoContent() throws Exception {
 
         Mockito.when(produtoService.obterTodos(any())).thenReturn(null);
-        var response = requestMockMvc.perform(get("/produtos")).andReturn().getResponse();
+        var response = requestMockMvc.perform(get("/produtos/todos")).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
-    @WithMockUser
     @DisplayName("Deve retornar uma page de produtos igual ao passado pelo serviço e o status OK")
     void testObterTodosRetornandoOk() throws Exception {
         var pageable = PageRequest.of(0, 10);
         var listDadosProduto = List.of(dadosProduto);
         var page = new PageImpl<>(listDadosProduto, pageable, listDadosProduto.size());
         Mockito.when(produtoService.obterTodos(any())).thenReturn(page);
-        var response = requestMockMvc.perform(get("/produtos").contentType(MediaType.APPLICATION_JSON).content(pageable.toString())).andReturn().getResponse();
+        var response = requestMockMvc.perform(get("/produtos/todos").contentType(MediaType.APPLICATION_JSON).content(pageable.toString())).andReturn().getResponse();
         Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         JSONObject jsonEsperado = new JSONObject(pageJson.write(page).getJson());
         JSONObject jsonRetornado = new JSONObject(response.getContentAsString());
@@ -77,9 +77,74 @@ public class ProdutosControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @DisplayName("Deve retornar uma exceção IllegalArgumentException")
+    @WithMockUser(username = "guidovale@gmail.com", password = "soubom", roles = {"ADMIN"})
+    void testSalvarSemConteudo() throws Exception {
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            requestMockMvc.perform(MockMvcRequestBuilders.multipart("/produtos")
+                    .file(null)
+                    .param("dadosProduto", produtoJson.write(dadosProduto).getJson().toString())).andReturn().getResponse();
+        });
+
+    }
+
+    @Test
+    @DisplayName("Deve retornar um status CREATED e retornar o json enviado.")
+    @WithMockUser(username = "guidovale@gmail.com", password = "soubom", roles = {"ADMIN"})
+    void testSalvarComConteudo() throws Exception {
+
+        Mockito.when(produtoService.salvarProduto(any(), any())).thenReturn(dadosProduto);
+
+        var response = requestMockMvc.perform(MockMvcRequestBuilders.multipart("/produtos")
+                .file(file)
+                .param("dadosProduto", produtoJson.write(dadosProduto).getJson().toString())).andReturn().getResponse();
+
+        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        Assertions.assertThat(response.getContentAsString()).isEqualTo(produtoJson.write(dadosProduto).getJson());
+    }
+
+    @Test
+    @DisplayName("Deve retornar um json e o status ok.")
+    void testarBuscaERetornarResultado() throws Exception {
+        var pageable = PageRequest.of(0, 10);
+        var listDadosProduto = List.of(dadosProduto);
+        var page = new PageImpl<>(listDadosProduto, pageable, listDadosProduto.size());
+        Mockito.when(produtoService.buscador(any(), any())).thenReturn(page);
+        var response = requestMockMvc.perform(get("/produtos/busca").param("busca", "dadoBuscado")
+                .param("page", "0")
+                .param("size", "10")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        JSONObject jsonEsperado = new JSONObject(pageJson.write(page).getJson());
+        JSONObject jsonRetornado = new JSONObject(response.getContentAsString());
+        Assertions.assertThat(jsonRetornado.get("content").toString()).isEqualTo(jsonEsperado.get("content").toString());
+    }
+
+    @Test
+    @DisplayName("Deve retornar o status NO_CONTENT")
+    void testobterUltimosLancamentosRetornandoNoContent() throws Exception {
+        Mockito.when(produtoService.obterUltimosLançamentos(any())).thenReturn(null);
+        var response = requestMockMvc.perform(get("/produtos")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma page de produtos igual ao passado pelo serviço e o status OK")
+    void testobterUltimosLancamentosRetornandoOk() throws Exception {
+        var pageable = PageRequest.of(0, 10);
+        var listDadosProduto = List.of(dadosProduto);
+        var page = new PageImpl<>(listDadosProduto, pageable, listDadosProduto.size());
+        Mockito.when(produtoService.obterUltimosLançamentos(any())).thenReturn(page);
+        var response = requestMockMvc.perform(get("/produtos")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        JSONObject jsonEsperado = new JSONObject(pageJson.write(page).getJson());
+        JSONObject jsonRetornado = new JSONObject(response.getContentAsString());
+        Assertions.assertThat(jsonRetornado.get("content").toString()).isEqualTo(jsonEsperado.get("content").toString());
+    }
+
+    @Test
     @DisplayName("Deve retornar o produto")
-    void testBuscarProdutoPorCodigoEAchar() throws Exception {
+    void testdetalharProdutoEAchar() throws Exception {
 
         Mockito.when(produtoService.buscarProdutoPorCodigo(any())).thenReturn(dadosProduto);
         var response = requestMockMvc.perform(get("/produtos/1")).andReturn().getResponse();
@@ -87,24 +152,18 @@ public class ProdutosControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar uma exceção BAD REQUEST")
-    @WithMockUser
-    void testSalvarSemFileSemConteudo() throws Exception {
-        var response = requestMockMvc.perform(post("/produtos/sm")).andReturn().getResponse();
-        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    @DisplayName("Deve retornar o produto e status ok")
+    void testObterProdutosPorTipoERetornarValor() throws Exception {
+        var pageable = PageRequest.of(0, 10);
+        var listDadosProduto = List.of(dadosProduto);
+        var page = new PageImpl<>(listDadosProduto, pageable, listDadosProduto.size());
+        Mockito.when(produtoService.obterPorTipo(any(), any())).thenReturn(page);
+        var response = requestMockMvc.perform(get("/produtos/buscarProdutoPorTipo").param("tipoProduto", "CAMISA")
+                .param("page", "0")
+                .param("size", "10")).andReturn().getResponse();
+        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        JSONObject jsonEsperado = new JSONObject(pageJson.write(page).getJson());
+        JSONObject jsonRetornado = new JSONObject(response.getContentAsString());
+        Assertions.assertThat(jsonRetornado.get("content").toString()).isEqualTo(jsonEsperado.get("content").toString());
     }
-
-    @Test
-    @DisplayName("Deve retornar um status CREATED e retornar o json enviado.")
-    @WithMockUser
-    void testSalvarSemFileComConteudo() throws Exception {
-
-        Mockito.when(produtoService.salvarProdutoSemFile(any())).thenReturn(dadosProduto);
-
-        var response = requestMockMvc.perform(post("/produtos/sm").contentType(MediaType.APPLICATION_JSON).content(produtoJson.write(dadosProduto).getJson())).andReturn().getResponse();
-
-        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        Assertions.assertThat(response.getContentAsString()).isEqualTo(produtoJson.write(dadosProduto).getJson());
-    }
-
 }

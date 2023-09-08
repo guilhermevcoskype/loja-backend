@@ -18,29 +18,29 @@ import java.util.List;
 @CrossOrigin
 public class UsuarioController {
 
-	@Autowired
-	private UsuarioService usuarioService;
+    @Autowired
+    private UsuarioService usuarioService;
 
-	@PreAuthorize("hasRole('ADMIN')")
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	public List<DadosUsuario> obterUsuarios() {
-		return usuarioService.obterUsuarios();
-	}
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<DadosUsuario> obterUsuarios() {
+        return usuarioService.obterUsuarios();
+    }
 
-	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping("/{id}")
-	@Transactional
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void removerUsuario(@PathVariable("id") @NotNull @Positive Long id) {
-		usuarioService.removerUsuario(id);
-	}
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    @Transactional
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerUsuario(@PathVariable("id") @NotNull @Positive Long id) {
+        usuarioService.removerUsuario(id);
+    }
 
-	@PostMapping
-	@Transactional
-	@ResponseStatus(HttpStatus.CREATED)
-	public void cadastrarUsuario(@RequestBody @Valid DadosUsuario dadosUsuario) {
-		usuarioService.salvarUsuario(dadosUsuario);
-	}
+    @PostMapping
+    @Transactional
+    @ResponseStatus(HttpStatus.CREATED)
+    public void cadastrarUsuario(@RequestBody @Valid DadosUsuario dadosUsuario) {
+        usuarioService.salvarUsuario(dadosUsuario);
+    }
 
 }

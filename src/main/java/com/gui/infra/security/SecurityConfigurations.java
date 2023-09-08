@@ -28,10 +28,13 @@ public class SecurityConfigurations {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.requestMatchers("/produtos/**").permitAll();
-                    req.requestMatchers("/usuario/**").permitAll();
-                    req.requestMatchers("/pagamento/**").permitAll();
+                    req.requestMatchers("/login").permitAll();
+                    req.requestMatchers(HttpMethod.GET,"/produtos/**").permitAll();
+                    req.requestMatchers(HttpMethod.POST,"/produtos/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT,"/produtos/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE,"/produtos/**").hasRole("ADMIN");
+                    req.requestMatchers("/pagamento/**").hasAnyRole("ADMIN", "USER");
+                    req.requestMatchers(HttpMethod.POST,"/usuario/**").permitAll();
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll();
                     req.requestMatchers( "/images/**", "/static/**").permitAll();
                     req.anyRequest().authenticated();
@@ -50,75 +53,3 @@ public class SecurityConfigurations {
         return new BCryptPasswordEncoder();
     }
 }
-
-/*
- * @Configuration
- *
- * @EnableWebSecurity
- * public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
- *
- * @Autowired
- * private AutenticacaoService usuarioService;
- *
- * @Override
- * protected void configure(HttpSecurity http) throws Exception {
- * http
- * .httpBasic()
- * .and()
- * .csrf().disable()
- * .authorizeRequests()
- * .antMatchers("/css/**", "/js/**", "/webjars/**", "/images/**", "/static/**",
- * "/resources/**").permitAll()
- * .antMatchers("/carrinho/**").permitAll()
- * .antMatchers("/index", "/").permitAll()
- * .antMatchers("/cadastro/usuario").permitAll()
- * .antMatchers("/finalizar").hasRole("USER")
- * .antMatchers("/pagamento").hasRole("USER")
- * .antMatchers("/tipoProduto").hasRole("USER")
- * .antMatchers("/finalizar").hasRole("ADMIN")
- * .antMatchers("/pagamento").hasRole("ADMIN")
- * .antMatchers("/tipoProduto").hasRole("ADMIN")
- * .antMatchers("/cadastro").hasRole("ADMIN")
- * .anyRequest().authenticated()
- * .and()
- * .formLogin()
- * .failureUrl("/login-error")
- * .loginPage("/login")
- * .permitAll()
- * .and()
- * .logout()
- * .logoutUrl("/logout")
- * .permitAll()
- * .invalidateHttpSession(true)
- * .logoutSuccessUrl("/");
- * }
- *
- * @Override
- * public void configure(WebSecurity web) throws Exception {
- * web
- * .ignoring()
- * .antMatchers("/resources/**", "/css/**", "/images/**",
- * "/webjars/**","/js/**","/static/**");
- * }
- *
- * @Override
- * protected void configure(AuthenticationManagerBuilder auth) throws Exception
- * {
- * auth.authenticationProvider(authProvider());
- * }
- *
- * @Bean
- * public DaoAuthenticationProvider authProvider() {
- * DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
- * authProvider.setUserDetailsService(usuarioService);
- * authProvider.setPasswordEncoder(passwordEncoder());
- * return authProvider;
- * }
- *
- * @Bean
- * public PasswordEncoder passwordEncoder() {
- *
- * return new BCryptPasswordEncoder();
- * }
- * }
- */

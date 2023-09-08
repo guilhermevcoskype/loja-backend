@@ -1,11 +1,11 @@
 package com.gui.domain.service;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.mapper.ProdutoMapper;
+import com.gui.domain.model.TipoProduto;
+import com.gui.domain.repository.ProdutoRepository;
+import com.gui.domain.utils.FileSaver;
+import com.gui.infra.exception.ProdutoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,12 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gui.domain.mapper.ProdutoMapper;
-import com.gui.domain.model.Produto;
-import com.gui.domain.model.TipoProduto;
-import com.gui.domain.repository.ProdutoRepository;
-import com.gui.domain.utils.FileSaver;
-import com.gui.infra.exception.ProdutoException;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 @Service
 public class ProdutoService {
@@ -66,13 +62,6 @@ public class ProdutoService {
 		if(!file.getOriginalFilename().equals("blob")){
 			return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto, fileSaver.write(file))));
 		}
-
-		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto)));
-
-	}
-
-	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public DadosProduto salvarProdutoSemFile(DadosProduto dadosProduto) {
 
 		return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto)));
 
