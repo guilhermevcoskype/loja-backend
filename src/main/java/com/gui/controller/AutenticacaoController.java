@@ -36,8 +36,8 @@ public class AutenticacaoController {
     @Transactional
     public ResponseEntity<DadosToken> efetuarLogin(@RequestBody @Valid DadosUsuario dadosUsuario) {
         Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dadosUsuario.roles())).stream()
-            .map(role -> new SimpleGrantedAuthority(role.name()))
-            .collect(Collectors.toSet());
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toSet());
         var authenticationToken = new UsernamePasswordAuthenticationToken(dadosUsuario.nome(), dadosUsuario.senha(), authorities);
         var authentication = manager.authenticate(authenticationToken);
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
