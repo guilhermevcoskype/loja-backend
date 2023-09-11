@@ -28,7 +28,7 @@ public class FileSaver {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(
-					"Não foi possível salva o arquivo: " + file.getOriginalFilename() + ". Favor tentar outra vez!");
+					"Não foi possível salvar o arquivo: " + file.getOriginalFilename() + ". Favor tentar outra vez!");
 		}
 	}
 }

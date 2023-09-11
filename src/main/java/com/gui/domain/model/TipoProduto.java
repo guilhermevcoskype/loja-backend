@@ -6,10 +6,12 @@ public enum TipoProduto {
     private final String tipo;
 
     TipoProduto(String tipo) {
+
         this.tipo = tipo;
     }
 
     public String getTipo() {
+
         return tipo;
     }
 }

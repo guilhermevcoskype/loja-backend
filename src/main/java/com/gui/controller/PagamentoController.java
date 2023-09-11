@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.concurrent.Callable;
 
 @RestController
@@ -24,7 +23,6 @@ public class PagamentoController {
 
     @PostMapping
     public Callable<ResponseEntity<String>> finalizar(@RequestBody DadosPagamento pagamento) {
-        System.out.println("passou aqui");
 
         return () -> {
             String response = restTemplate.postForObject(URL_WEBSERVICE, new DadosPagamento(pagamento.getValue()),

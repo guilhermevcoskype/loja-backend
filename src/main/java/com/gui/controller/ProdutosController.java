@@ -14,13 +14,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@Validated
 @RequestMapping("/produtos")
 @CrossOrigin
 //@SecurityRequirement(name = "bearer-key")
@@ -31,7 +29,7 @@ public class ProdutosController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosProduto> salvar(@RequestPart MultipartFile file, @ModelAttribute DadosProduto dadosProduto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<DadosProduto> salvar(@RequestPart MultipartFile file, @Valid @ModelAttribute DadosProduto dadosProduto, UriComponentsBuilder uriBuilder) {
         var produtoSalvo = produtoService.salvarProduto(file, dadosProduto);
         var uri = uriBuilder.path("/produtos/{id}").buildAndExpand(produtoSalvo.id()).toUri();
         return ResponseEntity.created(uri).body(produtoSalvo);

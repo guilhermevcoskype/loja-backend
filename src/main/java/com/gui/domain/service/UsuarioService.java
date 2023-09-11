@@ -16,31 +16,34 @@ import com.gui.domain.repository.UsuarioRepository;
 @Service
 public class UsuarioService implements UserDetailsService {
 
-	@Autowired
-	private UsuarioRepository usuarioRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-	@Autowired
-	private UsuarioMapper usuarioMapper;
+    @Autowired
+    private UsuarioMapper usuarioMapper;
 
-	public void salvarUsuario(DadosUsuario dadosUsuario) {
-		if(usuarioRepository.findByLogin(dadosUsuario.nome()) == null){
-			usuarioRepository.save(usuarioMapper.mapperToUsuario(dadosUsuario));
-		}else{
-			throw new UsuarioException();
-		}
+    public void salvarUsuario(DadosUsuario dadosUsuario) {
+        if (usuarioRepository.findByLogin(dadosUsuario.nome()) == null) {
+            usuarioRepository.save(usuarioMapper.mapperToUsuario(dadosUsuario));
+        } else {
+            throw new UsuarioException();
+        }
 
-	}
-	
-	public void removerUsuario(Long id) {
-		usuarioRepository.delete(usuarioRepository.findById(id).get());
-	}
-	
-	public List<DadosUsuario> obterUsuarios() {
-		return usuarioRepository.findAll().stream().map(usuarioMapper::mapperToRecord).toList();
-	}
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String nome) throws UsernameNotFoundException {
-		return usuarioRepository.findByLogin(nome);
-	}
+    public void removerUsuario(Long id) {
+
+        usuarioRepository.delete(usuarioRepository.findById(id).get());
+    }
+
+    public List<DadosUsuario> obterUsuarios() {
+
+        return usuarioRepository.findAll().stream().map(usuarioMapper::mapperToRecord).toList();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String nome) throws UsernameNotFoundException {
+
+        return usuarioRepository.findByLogin(nome);
+    }
 }
