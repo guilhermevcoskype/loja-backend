@@ -21,7 +21,7 @@ import com.gui.domain.model.TipoProduto;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test") //o que tem depois do traço no properties vai ser acionado
+@ActiveProfiles("test")
 
 public class ProdutoRepositoryTest {
 

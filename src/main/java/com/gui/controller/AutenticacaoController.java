@@ -32,6 +32,7 @@ public class AutenticacaoController {
     @Autowired
     private TokenService tokenService;
 
+
     @PostMapping
     @Transactional
     public ResponseEntity<DadosToken> efetuarLogin(@RequestBody @Valid DadosUsuario dadosUsuario) {

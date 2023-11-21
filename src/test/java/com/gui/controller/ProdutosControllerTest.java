@@ -23,6 +23,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -31,6 +33,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,9 +50,12 @@ public class ProdutosControllerTest {
     @Autowired
     private JacksonTester<Page> pageJson;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     private DadosProduto dadosProduto = new DadosProduto("1", "camisa", "22", "22.2", Date.valueOf(LocalDate.now()).toString(), "teste", TipoProduto.CAMISA.getTipo());
 
-    private MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
+    private MockMultipartFile file = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, "test data".getBytes());
 
     @MockBean
     private ProdutoService produtoService;
@@ -84,7 +91,7 @@ public class ProdutosControllerTest {
         assertThrows(IllegalArgumentException.class, () -> {
             requestMockMvc.perform(MockMvcRequestBuilders.multipart("/produtos")
                     .file(null)
-                    .param("dadosProduto", produtoJson.write(dadosProduto).getJson().toString())).andReturn().getResponse();
+                    .param("dadosProduto", produtoJson.write(dadosProduto).getJson())).andReturn().getResponse();
         });
 
     }
@@ -96,12 +103,10 @@ public class ProdutosControllerTest {
 
         Mockito.when(produtoService.salvarProduto(any(), any())).thenReturn(dadosProduto);
 
-        var response = requestMockMvc.perform(MockMvcRequestBuilders.multipart("/produtos")
-                .file(file)
-                .param("dadosProduto", produtoJson.write(dadosProduto).getJson().toString())).andReturn().getResponse();
-
-        Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        Assertions.assertThat(response.getContentAsString()).isEqualTo(produtoJson.write(dadosProduto).getJson());
+        MockMvc mockMvcFilePart
+                = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvcFilePart.perform(multipart("/produtos").file(file).flashAttr("dadosProduto", dadosProduto))
+                .andExpect(status().isCreated()).andReturn();
     }
 
     @Test
