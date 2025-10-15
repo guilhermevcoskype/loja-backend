@@ -14,16 +14,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileSaver {
 
-	@Value("${upload.dir.location=${user.dir}}")
+	@Value("${upload.dir.location}")
 	public String uploadDir;
 
 	public String write(MultipartFile file) {
 
 		try {
-			Path copyLocation = Paths.get(uploadDir + File.separator + "src" + File.separator + "main" + File.separator
-					+ "resources" + File.separator + "static" + File.separator + "images" + File.separator
-					+ StringUtils.cleanPath(file.getOriginalFilename()));
-			Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+            /*Path copyLocation = Paths.get(uploadDir + File.separator + "src" + File.separator + "main" + File.separator
+                    + "resources" + File.separator + "static" + File.separator + "images" + File.separator
+                    + StringUtils.cleanPath(file.getOriginalFilename()));*/
+            Path copyLocation = Paths.get(uploadDir + File.separator + "images" + File.separator
+                    + StringUtils.cleanPath(file.getOriginalFilename()));
+            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
 			return File.separator + "images" + File.separator + file.getOriginalFilename();
 		} catch (Exception e) {
 			e.printStackTrace();
