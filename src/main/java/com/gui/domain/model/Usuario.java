@@ -1,23 +1,6 @@
 package com.gui.domain.model;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -25,6 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+
+import static com.gui.domain.model.Role.ADMIN;
+import static com.gui.domain.model.Role.USER;
 
 @Entity
 @Getter
@@ -49,17 +41,14 @@ public class Usuario implements UserDetails{
 	@Size(min = 3, max = 200)
 	private String senha;
 
-	@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
 	@Enumerated(EnumType.STRING)
-	private Set<Role> roles;
+	private Role role;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles.stream()
-				.map(role -> new SimpleGrantedAuthority(role.name()))
-				.collect(Collectors.toSet());
-            
+		if(this.role== ADMIN) {
+            return List.of(new SimpleGrantedAuthority(ADMIN.getRole()), new SimpleGrantedAuthority(USER.getRole()));
+        }else return List.of(new SimpleGrantedAuthority(USER.getRole()));
 	}
 
 	@Override

@@ -13,8 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import com.gui.domain.dto.DadosToken;
-import com.gui.domain.dto.DadosUsuario;
+import com.gui.domain.dto.DadosTokenDTO;
+import com.gui.domain.dto.DadosUsuarioDTO;
 import com.gui.domain.model.Role;
 import com.gui.domain.model.Usuario;
 import com.gui.domain.service.TokenService;
@@ -34,7 +34,7 @@ public class AutenticacaoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosToken> efetuarLogin(@RequestBody @Valid DadosUsuario dadosUsuario) {
+    public ResponseEntity<DadosTokenDTO> efetuarLogin(@RequestBody @Valid DadosUsuarioDTO dadosUsuario) {
         Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dadosUsuario.roles())).stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toSet());
@@ -42,6 +42,6 @@ public class AutenticacaoController {
         var authentication = manager.authenticate(authenticationToken);
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok(new DadosToken(tokenJWT));
+        return ResponseEntity.ok(new DadosTokenDTO(tokenJWT));
     }
 }

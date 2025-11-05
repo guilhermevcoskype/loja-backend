@@ -1,19 +1,19 @@
 package com.gui.controller;
 
-import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.dto.DadosProdutoDTO;
 import com.gui.domain.model.TipoProduto;
 import com.gui.domain.service.ProdutoService;
 import org.assertj.core.api.Assertions;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active=test")
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 public class ProdutosControllerTest {
@@ -41,16 +42,16 @@ public class ProdutosControllerTest {
     private MockMvc requestMockMvc;
 
     @Autowired
-    private JacksonTester<DadosProduto> produtoJson;
+    private JacksonTester<DadosProdutoDTO> produtoJson;
 
     @Autowired
     private JacksonTester<Page> pageJson;
 
-    private DadosProduto dadosProduto = new DadosProduto("1", "camisa", "22", "22.2", Date.valueOf(LocalDate.now()).toString(), "teste", TipoProduto.CAMISA.getTipo());
+    private DadosProdutoDTO dadosProduto = new DadosProdutoDTO("1", "camisa", "22", "22.2", Date.valueOf(LocalDate.now()).toString(), "teste", TipoProduto.CAMISA.getTipo());
 
     private MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
 
-    @MockBean
+    @MockitoBean
     private ProdutoService produtoService;
 
     @Test

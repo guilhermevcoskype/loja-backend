@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.gui.domain.dto.DadosUsuario;
+import com.gui.domain.dto.DadosUsuarioDTO;
 import com.gui.domain.mapper.UsuarioMapper;
 import com.gui.domain.repository.UsuarioRepository;
 
@@ -22,7 +22,7 @@ public class UsuarioService implements UserDetailsService {
 	@Autowired
 	private UsuarioMapper usuarioMapper;
 
-	public void salvarUsuario(DadosUsuario dadosUsuario) {
+	public void salvarUsuario(DadosUsuarioDTO dadosUsuario) {
 		if(usuarioRepository.findByLogin(dadosUsuario.nome()) == null){
 			usuarioRepository.save(usuarioMapper.mapperToUsuario(dadosUsuario));
 		}else{
@@ -35,7 +35,7 @@ public class UsuarioService implements UserDetailsService {
 		usuarioRepository.delete(usuarioRepository.findById(id).get());
 	}
 	
-	public List<DadosUsuario> obterUsuarios() {
+	public List<DadosUsuarioDTO> obterUsuarios() {
 		return usuarioRepository.findAll().stream().map(usuarioMapper::mapperToRecord).toList();
 	}
 

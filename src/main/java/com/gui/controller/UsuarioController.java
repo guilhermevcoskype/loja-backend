@@ -1,6 +1,6 @@
 package com.gui.controller;
 
-import com.gui.domain.dto.DadosUsuario;
+import com.gui.domain.dto.DadosUsuarioDTO;
 import com.gui.domain.service.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +24,7 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<DadosUsuario> obterUsuarios() {
+    public List<DadosUsuarioDTO> obterUsuarios() {
         return usuarioService.obterUsuarios();
     }
 
@@ -39,7 +39,7 @@ public class UsuarioController {
     @PostMapping
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
-    public void cadastrarUsuario(@RequestBody @Valid DadosUsuario dadosUsuario) {
+    public void cadastrarUsuario(@RequestBody @Valid DadosUsuarioDTO dadosUsuario) {
         usuarioService.salvarUsuario(dadosUsuario);
     }
 

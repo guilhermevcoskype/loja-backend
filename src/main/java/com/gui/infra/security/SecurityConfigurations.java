@@ -34,7 +34,7 @@ public class SecurityConfigurations {
                     req.requestMatchers(HttpMethod.POST,"/produtos/**").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.PUT,"/produtos/**").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.DELETE,"/produtos/**").hasRole("ADMIN");
-                    req.requestMatchers("/pagamento/**").hasAnyRole("ADMIN", "USER");
+                    req.requestMatchers("/pagamento/**").hasRole("USER");
                     req.requestMatchers(HttpMethod.POST,"/usuario/**").permitAll();
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll();
                     req.requestMatchers( "/images/**", "/static/**").permitAll();

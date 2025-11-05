@@ -1,6 +1,6 @@
 package com.gui.controller;
 
-import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.dto.DadosProdutoDTO;
 import com.gui.domain.model.TipoProduto;
 import com.gui.domain.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class ProdutosController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<DadosProduto> salvar(@RequestPart MultipartFile file, @ModelAttribute DadosProduto dadosProduto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<DadosProdutoDTO> salvar(@RequestPart MultipartFile file, @ModelAttribute DadosProdutoDTO dadosProduto, UriComponentsBuilder uriBuilder) {
         var produtoSalvo = produtoService.salvarProduto(file, dadosProduto);
         var uri = uriBuilder.path("/produtos/{id}").buildAndExpand(produtoSalvo.id()).toUri();
         return ResponseEntity.created(uri).body(produtoSalvo);
@@ -39,15 +39,15 @@ public class ProdutosController {
     }
 
     @GetMapping("/busca")
-    public ResponseEntity<Page<DadosProduto>> busca(@RequestParam("busca") String buscado,
-                                                    @PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
+    public ResponseEntity<Page<DadosProdutoDTO>> busca(@RequestParam("busca") String buscado,
+                                                       @PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
         return ResponseEntity.ok(produtoService.buscador(buscado, paginacao));
     }
 
     @GetMapping("/todos")
-    public ResponseEntity<Page<DadosProduto>> obterTodos(
+    public ResponseEntity<Page<DadosProdutoDTO>> obterTodos(
             @PageableDefault(sort = "descricao", size = 10) Pageable pageable) {
-        Page<DadosProduto> pageProdutos = produtoService.obterTodos(pageable);
+        Page<DadosProdutoDTO> pageProdutos = produtoService.obterTodos(pageable);
         if (pageProdutos != null && !pageProdutos.isEmpty()) {
             return ResponseEntity.ok().body(pageProdutos);
         }
@@ -56,8 +56,8 @@ public class ProdutosController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosProduto>> obterUltimosLancamentos(@PageableDefault(sort = "dataInsercao", size = 8) Pageable paginacao) {
-        Page<DadosProduto> pageProdutos = produtoService.obterUltimosLançamentos(paginacao);
+    public ResponseEntity<Page<DadosProdutoDTO>> obterUltimosLancamentos(@PageableDefault(sort = "dataInsercao", size = 8) Pageable paginacao) {
+        Page<DadosProdutoDTO> pageProdutos = produtoService.obterUltimosLançamentos(paginacao);
         if (pageProdutos != null && !pageProdutos.isEmpty()) {
             return ResponseEntity.ok().body(pageProdutos);
         }
@@ -66,7 +66,7 @@ public class ProdutosController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosProduto> detalharProduto(@PathVariable("id") @NotNull @Positive Long id) {
+    public ResponseEntity<DadosProdutoDTO> detalharProduto(@PathVariable("id") @NotNull @Positive Long id) {
         return ResponseEntity.ok(produtoService.buscarProdutoPorCodigo(id));
 
     }
@@ -78,15 +78,15 @@ public class ProdutosController {
     }
 
     @GetMapping("/buscarProdutoPorTipo")
-    public ResponseEntity<Page<DadosProduto>> obterProdutosPorTipo(@RequestParam("tipoProduto") String buscado,
-                                                                   @PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
+    public ResponseEntity<Page<DadosProdutoDTO>> obterProdutosPorTipo(@RequestParam("tipoProduto") String buscado,
+                                                                      @PageableDefault(sort = "descricao", direction = Sort.Direction.ASC, size = 8) Pageable paginacao) {
         return ResponseEntity.ok(produtoService.obterPorTipo(TipoProduto.valueOf(buscado), paginacao));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<DadosProduto> editarProduto(@PathVariable("id") @NotNull @Positive Long id,
-                                                      @RequestBody @Valid DadosProduto produto) {
+    public ResponseEntity<DadosProdutoDTO> editarProduto(@PathVariable("id") @NotNull @Positive Long id,
+                                                         @RequestBody @Valid DadosProdutoDTO produto) {
         return ResponseEntity.ok(produtoService.editarProduto(id, produto));
 
     }

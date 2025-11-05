@@ -1,14 +1,11 @@
 package com.gui.domain.mapper;
 
+import com.gui.domain.dto.DadosUsuarioDTO;
+import com.gui.domain.model.Role;
+import com.gui.domain.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import com.gui.domain.dto.DadosUsuario;
-import com.gui.domain.model.Role;
-import com.gui.domain.model.Usuario;
-
-import java.util.Set;
 
 @Component
 public class UsuarioMapper {
@@ -16,16 +13,16 @@ public class UsuarioMapper {
     @Autowired
 	private PasswordEncoder passwordEncoder;
 
-    public Usuario mapperToUsuario(DadosUsuario dadosUsuario) {
+    public Usuario mapperToUsuario(DadosUsuarioDTO dadosUsuario) {
         if (dadosUsuario != null) {
-            return new Usuario(dadosUsuario.id(), dadosUsuario.nome(), passwordEncoder.encode(dadosUsuario.senha()), Set.of(Role.valueOf(dadosUsuario.roles())));
+            return new Usuario(dadosUsuario.id(), dadosUsuario.nome(), passwordEncoder.encode(dadosUsuario.senha()), Role.valueOf(dadosUsuario.roles()));
         }
         return null;
     }
     
-    public DadosUsuario mapperToRecord(Usuario usuario) {
+    public DadosUsuarioDTO mapperToRecord(Usuario usuario) {
         if (usuario != null) {
-            return new DadosUsuario(usuario.getId(), usuario.getLogin(), usuario.getSenha(), usuario.getRoles().toString());
+            return new DadosUsuarioDTO(usuario.getId(), usuario.getLogin(), usuario.getSenha(), usuario.getRole().toString());
         }
         return null;
     }

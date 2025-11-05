@@ -28,7 +28,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer(issuer)
                     .withSubject(usuario.getLogin())
-                    .withClaim("roles", usuario.getRoles().stream().findFirst().get().getRole())
+                    .withClaim("roles", usuario.getRole().getRole())
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception){
