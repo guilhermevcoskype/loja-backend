@@ -1,6 +1,6 @@
 package com.gui.domain.mapper;
 
-import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.dto.DadosProdutoDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,16 +17,16 @@ public class ProdutoMapper {
     @Value("${url.imagem}")
     public String urlImagem;
 
-    public DadosProduto mapperToRecord(Produto produto) {
+    public DadosProdutoDTO mapperToRecord(Produto produto) {
         if (produto == null) {
             return null;
         }
-        return new DadosProduto(produto.getId().toString(), produto.getDescricao(), produto.getEstoque().toString(), produto.getPreco().toString(),
+        return new DadosProdutoDTO(produto.getId().toString(), produto.getDescricao(), produto.getEstoque().toString(), produto.getPreco().toString(),
                 produto.getDataInsercao().toString(), produto.getUrlImagem(), produto.getTipoProduto().getTipo());
 
     }
 
-    public Produto mapperToProduto(DadosProduto dadosProduto, String... fileSaver) {
+    public Produto mapperToProduto(DadosProdutoDTO dadosProduto, String... fileSaver) {
         if (dadosProduto == null) {
             return null;
         }

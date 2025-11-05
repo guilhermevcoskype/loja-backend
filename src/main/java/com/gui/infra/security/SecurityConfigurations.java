@@ -29,11 +29,12 @@ public class SecurityConfigurations {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/login").permitAll();
+                    req.requestMatchers(HttpMethod.POST,"/cadastrarEmail**").permitAll();
                     req.requestMatchers(HttpMethod.GET,"/produtos/**").permitAll();
                     req.requestMatchers(HttpMethod.POST,"/produtos/**").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.PUT,"/produtos/**").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.DELETE,"/produtos/**").hasRole("ADMIN");
-                    req.requestMatchers("/pagamento/**").hasAnyRole("ADMIN", "USER");
+                    req.requestMatchers("/pagamento/**").hasRole("USER");
                     req.requestMatchers(HttpMethod.POST,"/usuario/**").permitAll();
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll();
                     req.requestMatchers( "/images/**", "/static/**").permitAll();

@@ -1,6 +1,6 @@
 package com.gui.domain.service;
 
-import com.gui.domain.dto.DadosProduto;
+import com.gui.domain.dto.DadosProdutoDTO;
 import com.gui.domain.mapper.ProdutoMapper;
 import com.gui.domain.model.TipoProduto;
 import com.gui.domain.repository.ProdutoRepository;
@@ -29,16 +29,16 @@ public class ProdutoService {
 	@Autowired
 	private FileSaver fileSaver;
 
-	public Page<DadosProduto> obterTodos(Pageable pageable) {
+	public Page<DadosProdutoDTO> obterTodos(Pageable pageable) {
 		return repository.findAll(pageable).map(produtoMapper::mapperToRecord);
 	}
 
-	public DadosProduto buscarProdutoPorCodigo(Long codigo) {
+	public DadosProdutoDTO buscarProdutoPorCodigo(Long codigo) {
 		return repository.findById(codigo).map(produtoMapper::mapperToRecord)
 				.orElseThrow(() -> new ProdutoException(codigo));
 	}
 
-	public DadosProduto editarProduto(Long id, DadosProduto produto) {
+	public DadosProdutoDTO editarProduto(Long id, DadosProdutoDTO produto) {
 
 		return repository.findById(id).map(retorno -> {
 			retorno.setDataInsercao(Date.valueOf(produto.dataInsercao()));
@@ -52,12 +52,12 @@ public class ProdutoService {
 	}
 
 	@Cacheable(value = "ultimosLancamentos") // guarda o retorno da função no
-	public Page<DadosProduto> obterUltimosLançamentos(Pageable paginacao) throws ProdutoException{
+	public Page<DadosProdutoDTO> obterUltimosLançamentos(Pageable paginacao) throws ProdutoException{
 		return repository.findUltimosLancamentos(paginacao).map(produtoMapper::mapperToRecord);
 	}
 
 	@CacheEvict(value = "ultimosLancamentos") // limpa o cache ao fazer esse método
-	public DadosProduto salvarProduto(MultipartFile file, DadosProduto dadosProduto) {
+	public DadosProdutoDTO salvarProduto(MultipartFile file, DadosProdutoDTO dadosProduto) {
 
 		if(!file.getOriginalFilename().equals("blob")){
 			return produtoMapper.mapperToRecord(repository.save(produtoMapper.mapperToProduto(dadosProduto, fileSaver.write(file))));
@@ -72,11 +72,11 @@ public class ProdutoService {
 		repository.delete(repository.findById(id).orElseThrow(() -> new ProdutoException(id)));
 	}
 
-	public Page<DadosProduto> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
+	public Page<DadosProdutoDTO> obterPorTipo(TipoProduto tipoProduto, Pageable paginacao) {
 		return repository.findByTipoProduto(tipoProduto, paginacao).map(produtoMapper::mapperToRecord);
 	}
 
-	public Page<DadosProduto> buscador(String buscado, Pageable paginacao) {
+	public Page<DadosProdutoDTO> buscador(String buscado, Pageable paginacao) {
 		return repository.findProdutoDaBusca(buscado, paginacao).map(produtoMapper::mapperToRecord);
 	}
 
