@@ -32,7 +32,7 @@ public class UsuarioService implements UserDetailsService {
 	}
 	
 	public void removerUsuario(Long id) {
-		usuarioRepository.delete(usuarioRepository.findById(id).get());
+		usuarioRepository.deleteById(id);
 	}
 	
 	public List<DadosUsuarioDTO> obterUsuarios() {
