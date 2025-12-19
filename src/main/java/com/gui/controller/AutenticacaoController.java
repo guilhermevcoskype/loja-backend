@@ -1,25 +1,15 @@
 package com.gui.controller;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.gui.domain.dto.DadosTokenDTO;
+import com.gui.domain.dto.DadosUsuarioDTO;
+import com.gui.domain.model.Usuario;
+import com.gui.domain.service.TokenService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import com.gui.domain.dto.DadosTokenDTO;
-import com.gui.domain.dto.DadosUsuarioDTO;
-import com.gui.domain.model.Role;
-import com.gui.domain.model.Usuario;
-import com.gui.domain.service.TokenService;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/login")
@@ -33,12 +23,8 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping
-    @Transactional
     public ResponseEntity<DadosTokenDTO> efetuarLogin(@RequestBody @Valid DadosUsuarioDTO dadosUsuario) {
-        Collection<? extends GrantedAuthority> authorities = Set.of(Role.valueOf(dadosUsuario.roles())).stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toSet());
-        var authenticationToken = new UsernamePasswordAuthenticationToken(dadosUsuario.nome(), dadosUsuario.senha(), authorities);
+        var authenticationToken = new UsernamePasswordAuthenticationToken(dadosUsuario.nome(), dadosUsuario.senha());
         var authentication = manager.authenticate(authenticationToken);
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
