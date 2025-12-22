@@ -23,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Validated
 @RequestMapping("/produtos")
 @CrossOrigin
-//@SecurityRequirement(name = "bearer-key")
 public class ProdutosController {
 
     @Autowired
